@@ -1,9 +1,12 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace WireEngine
 {
     public class GameWindow
     {
+        const string cppUtilsDllPath = "D:\\Documents\\GitHub\\Scriptures\\x64\\Debug\\ConsoleCppUtils.dll";
+
         private int WINDOW_HEIGHT;
         private int WINDOW_WIDTH;
 
@@ -34,8 +37,8 @@ namespace WireEngine
         [DllImport("kernel32.dll", ExactSpelling = true)]
         private static extern IntPtr GetConsoleWindow();
 
-        [DllImport("kernel32")]
-        private extern static bool SetConsoleFont(IntPtr hOutput, uint index);
+        [DllImport(cppUtilsDllPath)]
+        private static extern int SetConsoleFontSize(int a);
 
         private enum StdHandle
         {
@@ -88,8 +91,6 @@ namespace WireEngine
         {
             Console.SetWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-            
-
             OnUpdating();
         }
 
@@ -100,9 +101,9 @@ namespace WireEngine
             return this;
         }
 
-        public GameWindow SetCharSize(uint w)
+        public GameWindow SetCharSize(int w)
         {
-            Console.WriteLine(SetConsoleFont(GetStdHandle(StdHandle.OutputHandle), w));
+            int b = SetConsoleFontSize(w);
             return this;
         }
 
