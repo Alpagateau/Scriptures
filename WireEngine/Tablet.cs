@@ -19,6 +19,8 @@ namespace WireEngine
         public Transform2D transform;
         TabletRenderType renderType;
 
+        public ConsoleColor stdforeground;
+
         public Tablet()
         {
             transform = new Transform2D();
@@ -49,22 +51,19 @@ namespace WireEngine
         public void setCursorPosition(int x, int y)
         {
             if (x < 0 || y < 0)
+            {
+                throw new Exception("Cannot set position below zero : " + x + "x " + y + "y");
                 return;
-            if (x > transform.scale.x-1 || y > transform.scale.y-1)
+            }
+            if (x > transform.scale.x || y > transform.scale.y)
+            {
+                throw new Exception("Cannot set position too high : " + x + "x " + y + "y");
                 return;
+            }
             Console.SetCursorPosition(x + transform.position.x, y + transform.position.y);
         }
 
-        public void setCursorPosition(Vector2Int v)
-        {
-            int x = v.x;
-            int y = v.y;
-            if (x < 0 || y < 0)
-                return;
-            if (x > transform.scale.x || y > transform.scale.y)
-                return;
-            Console.SetCursorPosition(x + transform.position.x, y + transform.position.y);
-        }
+        public void setCursorPosition(Vector2Int v) => setCursorPosition(v.x, v.y);
 
         public void fillWith(char c)
         {
@@ -72,32 +71,67 @@ namespace WireEngine
             {
                 for(int j = 0; j < transform.scale.y; j++)
                 {
-                    setCursorPosition(i, j);
-                    Console.Write(c);
+                    Write(c + "", new Vector2Int(i,j));
                 }
             }
         }
 
-        public void Write(string txt)
+        public void borderWith(char c, ConsoleColor? color)
         {
-            for(int i = 0; i < txt.Length; i++)
+            for (int i = 0; i < transform.scale.x; i++)
             {
-                setCursorPosition(i%transform.scale.x,i/transform.scale.x);
-                if (i / transform.scale.x > transform.scale.y)
-                    return;
-                Console.Write(txt[i]);
+                if (color != null)
+                {
+                    Write(c + "", new Vector2Int(i, 0), (ConsoleColor)color);
+                    Write(c + "", new Vector2Int(i, transform.scale.y - 1), (ConsoleColor)color);
+                }
+                else
+                {
+                    Write(c + "", new Vector2Int(i, 0));
+                    Write(c + "", new Vector2Int(i, transform.scale.y - 1));
+                }
+            }
+            for (int i = 0; i < transform.scale.y; i++)
+            {
+                if (color != null)
+                {
+                    Write(c + "", new Vector2Int(0, i), (ConsoleColor)color);
+                    Write(c + "", new Vector2Int(transform.scale.x - 1, i), (ConsoleColor)color);
+                }
+                else
+                {
+                    Write(c + "", new Vector2Int(0, i));
+                    Write(c + "", new Vector2Int(transform.scale.x - 1, i));
+                }
             }
         }
-        public void WriteLine(string txt)
+
+        public void Write(string txt, Vector2Int pos)
         {
             for (int i = 0; i < txt.Length; i++)
             {
-                setCursorPosition(i % transform.scale.x, i / transform.scale.x);
-                if (i / transform.scale.x > transform.scale.y)
-                    return;
+                setCursorPosition(pos);
+                if (pos.x > transform.scale.x)
+                {
+                    pos.x = 0;
+                    pos.y += 1;
+                }
+                if (pos.y > transform.scale.y)
+                    throw new Exception("No more room to write in tablet");
+                pos.x += 1;
                 Console.Write(txt[i]);
             }
-            Console.Write("\n");
         }
+
+        public void Write(string txt, Vector2Int pos, ConsoleColor color)
+        {
+            Console.ForegroundColor = color;
+            Write(txt, pos);
+            Console.ForegroundColor = stdforeground;
+        }
+
+        public void Write(string txt) => Write(txt, new Vector2Int(0, 0));
+
+        public void Clear() => fillWith(' ');
     }
 }

@@ -46,6 +46,23 @@ namespace WireEngine
         }
 
         public static Vector2 operator -(Vector2 a) => (a * -1);
+
+        public static bool operator ==(Vector2 a, Vector2 b)
+        {
+            return (a.x == b.x) && (a.y == b.y);
+        }
+
+        public static bool operator !=(Vector2 a, Vector2 b)
+        {
+            return (a.x != b.x) || (a.y != b.y);
+        }
+
+        public override string ToString()
+        {
+            return "(" + x + ", " + y + ")";
+        }
+
+        public override bool Equals(object? obj) => obj is Vector2 mys && (Vector2)obj == this;
     }
 
     public struct Vector2Int
@@ -53,10 +70,10 @@ namespace WireEngine
         public int x;
         public int y;
 
-        public Vector2Int(int x, int y)
+        public Vector2Int(int _x, int _y)
         {
-            this.x = x;
-            this.y = y;
+            this.x = _x;
+            this.y = _y;
         }
 
         public static Vector2Int operator -(Vector2Int a) => (a * -1);
@@ -80,7 +97,23 @@ namespace WireEngine
         {
             return new Vector2Int(a * b.x, b.y * a);
         }
-        
+
+        public static bool operator ==(Vector2Int a, Vector2Int b)
+        {
+            return (a.x == b.x) && (a.y == b.y);
+        }
+
+        public static bool operator !=(Vector2Int a, Vector2Int b)
+        {
+            return (a.x != b.x) || (a.y != b.y);
+        }
+
+        public override bool Equals(object? obj) => obj is Vector2Int mys && (Vector2Int)obj == this;
+
+        public override string ToString()
+        {
+            return "(" + x + ", " + y + ")";
+        }
     }
 
     public static class Math

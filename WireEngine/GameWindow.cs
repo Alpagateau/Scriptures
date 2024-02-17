@@ -21,13 +21,16 @@ namespace WireEngine
         public delegate void UpdatingEventHandler(object? o, EventArgs e);
         public event UpdatingEventHandler Updating;
 
+        public delegate void StartingEventHandler(object? o, EventArgs e);
+        public event StartingEventHandler Starting;
+
         public Input inputSystem;
 
         private const int MF_BYCOMMAND = 0x00000000;
         public const int SC_CLOSE = 0xF060;
         public const int SC_MINIMIZE = 0xF020;
         public const int SC_MAXIMIZE = 0xF030;
-        public const int SC_SIZE = 0xF000;//resize
+        public const int SC_SIZE = 0xF000;
 
         private enum StdHandle
         {
@@ -50,7 +53,10 @@ namespace WireEngine
         private static extern int SetConsoleFontSize(int a);
         [DllImport(cppUtilsDllPath)]
         private static extern int SetConsoleToPixel();
+        [DllImport(cppUtilsDllPath)]
+        private static extern int BlockScrolling();
 
+        private ColorScheme colorScheme;
 
         public GameWindow()
         {
@@ -58,11 +64,15 @@ namespace WireEngine
             IntPtr handle = GetConsoleWindow();
             IntPtr sysMenu = GetSystemMenu(handle, false);
 
+            BlockScrolling();
+
             WINDOW_HEIGHT = 20;
             WINDOW_WIDTH = 20;
             isGameRunning = false;
             tablets = new List<Tablet>();
             inputSystem = new Input();
+
+            colorScheme = new ColorScheme(ConsoleColor.Black, ConsoleColor.Black);
 
             if(isSizeLocked)
             {
@@ -83,6 +93,8 @@ namespace WireEngine
             Console.Title = ApplicationName;
             Console.SetWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
             Updating += inputSystem.CheckForInputs;
+
+            OnStarting();
             while(isGameRunning)
             {
                 GameUpdate();
@@ -100,6 +112,8 @@ namespace WireEngine
         {
             WINDOW_HEIGHT = h;
             WINDOW_WIDTH = w;
+            Console.SetWindowSize(w, h);
+            Console.SetBufferSize(w, h);
             return this;
         }
 
@@ -109,6 +123,22 @@ namespace WireEngine
                 SetConsoleToPixel();
             else
                 SetConsoleFontSize(w);
+            return this;
+        }
+
+        public GameWindow SetColorScheme(ColorScheme cs)
+        {
+            colorScheme = cs;
+            Console.ForegroundColor = cs.foregroundColor;
+            Console.BackgroundColor = cs.backgroundColor;
+
+            if(tablets.Count > 0)
+            {
+                foreach(Tablet t in tablets)
+                {
+                    t.stdforeground = cs.foregroundColor;
+                }
+            }
             return this;
         }
 
@@ -157,10 +187,12 @@ namespace WireEngine
         {
             if(canTabletFit(nTablet))
             {
+                nTablet.stdforeground = colorScheme.foregroundColor;
                 tablets.Add(nTablet);
             }
             else
             {
+                throw new Exception("Tablet cannot fit on the screen");
                 return false;
             }
             return true;
@@ -172,6 +204,12 @@ namespace WireEngine
             {
                 Updating.Invoke(this, EventArgs.Empty);
             }
+        }
+
+        public void OnStarting()
+        {
+            if(Starting != null)
+                Starting.Invoke(this, EventArgs.Empty);
         }
 
         public void setCursorPosition(int x, int y)

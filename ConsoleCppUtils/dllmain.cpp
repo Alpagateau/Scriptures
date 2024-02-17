@@ -21,6 +21,13 @@ int SetConsoleFontSize(int s)
 }
 
 EXPORTED_METHODE
+int BlockScrolling()
+{
+    ShowScrollBar(GetConsoleWindow(), SB_VERT, 0);
+    return 0;
+}
+
+EXPORTED_METHODE
 int SetConsoleToPixel()
 {
     CONSOLE_FONT_INFOEX cfi;
