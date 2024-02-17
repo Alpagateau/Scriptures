@@ -13,7 +13,22 @@ int SetConsoleFontSize(int s)
     cfi.nFont = 0;
     cfi.dwFontSize.X = s;                   // Width of each character in the font
     cfi.dwFontSize.Y = s * 2;                  // Height
-    cfi.FontFamily = FF_DONTCARE;
+    //cfi.FontFamily = FF_DONTCARE;
+    cfi.FontWeight = FW_NORMAL;
+    //std::wcscpy(cfi.FaceName, L"Consolas"); // Choose your font
+    SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi);
+    return 0;
+}
+
+EXPORTED_METHODE
+int SetConsoleToPixel()
+{
+    CONSOLE_FONT_INFOEX cfi;
+    cfi.cbSize = sizeof(cfi);
+    cfi.nFont = 0;
+    cfi.dwFontSize.X = 0;                   // Width of each character in the font
+    cfi.dwFontSize.Y = 1;                  // Height
+    //cfi.FontFamily = FF_DONTCARE;
     cfi.FontWeight = FW_NORMAL;
     //std::wcscpy(cfi.FaceName, L"Consolas"); // Choose your font
     SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi);

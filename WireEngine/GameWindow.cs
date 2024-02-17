@@ -6,6 +6,7 @@ namespace WireEngine
     public class GameWindow
     {
         const string cppUtilsDllPath = "D:\\Documents\\GitHub\\Scriptures\\x64\\Debug\\ConsoleCppUtils.dll";
+        public const char fullBlock = '\u2588';
 
         private int WINDOW_HEIGHT;
         private int WINDOW_WIDTH;
@@ -28,6 +29,11 @@ namespace WireEngine
         public const int SC_MAXIMIZE = 0xF030;
         public const int SC_SIZE = 0xF000;//resize
 
+        private enum StdHandle
+        {
+            OutputHandle = -11
+        }
+
         [DllImport("user32.dll")]
         public static extern int DeleteMenu(IntPtr hMenu, int nPosition, int wFlags);
 
@@ -37,18 +43,14 @@ namespace WireEngine
         [DllImport("kernel32.dll", ExactSpelling = true)]
         private static extern IntPtr GetConsoleWindow();
 
-        [DllImport(cppUtilsDllPath)]
-        private static extern int SetConsoleFontSize(int a);
-
-        private enum StdHandle
-        {
-            OutputHandle = -11
-        }
-
         [DllImport("kernel32")]
         private static extern IntPtr GetStdHandle(StdHandle index);
 
-        
+        [DllImport(cppUtilsDllPath)]
+        private static extern int SetConsoleFontSize(int a);
+        [DllImport(cppUtilsDllPath)]
+        private static extern int SetConsoleToPixel();
+
 
         public GameWindow()
         {
@@ -102,8 +104,11 @@ namespace WireEngine
         }
 
         public GameWindow SetCharSize(int w)
-        {
-            int b = SetConsoleFontSize(w);
+        {   
+            if (w == 0)
+                SetConsoleToPixel();
+            else
+                SetConsoleFontSize(w);
             return this;
         }
 
@@ -167,6 +172,15 @@ namespace WireEngine
             {
                 Updating.Invoke(this, EventArgs.Empty);
             }
+        }
+
+        public void setCursorPosition(int x, int y)
+        {
+            if (x < 0 || y < 0)
+                return;
+            if (x > WINDOW_WIDTH - 1 || y > WINDOW_HEIGHT - 1)
+                return;
+            Console.SetCursorPosition(x,y);
         }
     }
 }

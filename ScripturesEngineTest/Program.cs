@@ -17,13 +17,12 @@ class Game
 
     GameWindow gameWindow;
     int i = 0;
-
-    int x = 80, y = 19;
-    int lstX = 80, lstY = 19;
+    Vector2Int apple;
+    List<Vector2Int> pos = new List<Vector2Int>();
 
     public void main()
     {
-        gameWindow = new GameWindow().SetWindowSize(160, 40).SetCharSize(5);
+        gameWindow = new GameWindow().SetWindowSize(160, 40).SetCharSize(8);
 
         Tablet renderer = new Tablet(0, 0, 160, 1);
         Tablet renderer2 = new Tablet(0, 1, 160, 38);
@@ -31,6 +30,10 @@ class Game
             return;
         if (!gameWindow.addTablet(renderer2))
             return;
+
+        pos.Add(new Vector2Int(80, 19));
+
+        apple = new Vector2Int();
 
         gameWindow.Updating += GameLoop;
         gameWindow.inputSystem.KeyboardInput += HandleInput;
@@ -42,39 +45,31 @@ class Game
         switch(key.key)
         {
             case ConsoleKey.LeftArrow:
-                x--;
+                dir = 0;
                 break;
             case ConsoleKey.RightArrow:
-                x++;
+                dir = 2;
                 break;
             case ConsoleKey.UpArrow:
-                y--;
+                dir = 1;
                 break;
             case ConsoleKey.DownArrow:
-                y++;
+                dir = 3;
                 break;
             default:
                 break;
         }
     }
 
+    int dir = 0;
+
     void GameLoop(object? o, EventArgs e)
     {
-        gameWindow.tablets.Last().setCursorPosition(x, y);
-        Console.Write("C");
-
-        if(lstX != x || lstY != y)
-        {
-            gameWindow.tablets.Last().setCursorPosition(lstX, lstY);
-            Console.Write(" ");
-            lstX = x;
-            lstY = y;
-        }
-        if(x > 160 || y > 38)
+        //move the player
+        if(i > 20)
         {
             gameWindow.Stop();
         }
-        //gameWindow.tablets.Last().setCursorPosition(x, y);
-        //Console.Write(" ");
+
     }
 }
