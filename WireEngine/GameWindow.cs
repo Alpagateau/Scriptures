@@ -5,7 +5,7 @@ namespace WireEngine
 {
     public class GameWindow
     {
-        const string cppUtilsDllPath = "D:\\Documents\\GitHub\\Scriptures\\x64\\Debug\\ConsoleCppUtils.dll";
+        const string cppUtilsDllPath = "F:\\code\\wiremole\\Scriptures\\x64\\Debug\\ConsoleCppUtils.dll";
         public const char fullBlock = '\u2588';
 
         private int WINDOW_HEIGHT;
