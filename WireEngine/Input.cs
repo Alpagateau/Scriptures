@@ -16,18 +16,25 @@ namespace WireEngine
 
     public class Input
     {
+
+        const string cppUtilsDllPath = "F:\\code\\wiremole\\Scriptures\\x64\\Debug\\ConsoleCppUtils.dll";
+        //cpp lib
+        [DllImport(cppUtilsDllPath)]
+        private static extern IntPtr GetStandartHandle(int kind);
+
+        [DllImport(cppUtilsDllPath)]
+        private static extern int TestWithInputs();
+
+        public void testAgain()
+        {
+            TestWithInputs();
+        }
+
+        //Old code, works without the real stuff (no cpp lib)
         public delegate void KeyboardInputHandler(InputKeys e);
         public event KeyboardInputHandler KeyboardInput;
 
-        private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
-
-        //Creator / input init
-        public Input()
-        {
-        }
-
         //Keyboard inputs
-
         public void CheckForInputs(object? o, EventArgs e)
         {
             if (Console.KeyAvailable)

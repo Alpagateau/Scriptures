@@ -1,108 +1,83 @@
+#include "pch.h"
 #include <windows.h>
 #include <stdio.h>
+#include <tchar.h>
+#include <iostream>
 
-HANDLE hStdin;
-DWORD fdwSaveOldMode;
+#define EXPORTED_METHODE extern "C" __declspec(dllexport)
 
-VOID ErrorExit(LPCSTR);
 VOID KeyEventProc(KEY_EVENT_RECORD);
 VOID MouseEventProc(MOUSE_EVENT_RECORD);
 VOID ResizeEventProc(WINDOW_BUFFER_SIZE_RECORD);
 
-HANDLE GetStandartInputHandle();
-
-/*
-* Implement the whole input methodes in C++ and then create a wrapper around it,
-* as c++ gives way more acces to the low level stuff
-* Some ressources :
-*   https://stackoverflow.com/questions/315051/using-a-class-defined-in-a-c-dll-in-c-sharp-code
-* this may help on the wrapper
-* 
-* Do not only implement mouse, but use it also for keyboard with Unity-like methodes such as GetKeyDown and GetMouseButton
-* For the mouse mouvement, either a GetMouseMove => vector 2 or an event. the first one is better imo
-*/
-
-int main(VOID)
+EXPORTED_METHODE
+HANDLE GetStandartHandle(int kind)
 {
-    DWORD cNumRead, fdwMode, i;
+	if (kind == 0)
+		return GetStdHandle(STD_INPUT_HANDLE);
+	if (kind == 1)
+		return GetStdHandle(STD_OUTPUT_HANDLE);
+	if (kind == 2)
+		return GetStdHandle(STD_ERROR_HANDLE);
+}
+
+EXPORTED_METHODE
+int TestWithInputs()
+{
+	HANDLE InputHandle = GetStandartHandle(0);
     INPUT_RECORD irInBuf[128];
-    int counter = 0;
+	DWORD lenght, fdwMode;
 
-    // Get the standard input handle.
+    DWORD fdwSaveOldMode;
 
-    hStdin = GetStandartInputHandle();
-
-    // Save the current input mode, to be restored on exit.
-
-    if (!GetConsoleMode(hStdin, &fdwSaveOldMode))
-        ErrorExit("GetConsoleMode");
-
-    // Enable the window and mouse input events.
-
-    fdwMode = ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT;
-    if (!SetConsoleMode(hStdin, fdwMode))
-        ErrorExit("SetConsoleMode");
-
-    // Loop to read and handle the next 100 input events.
-
-    while (counter++ <= 100)
+    if (!GetConsoleMode(InputHandle, &fdwSaveOldMode)) {
+        std::cout << "ERROR : Line 32" << std::endl;
+        goto stop;
+    }
+    fdwMode = ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT | ENABLE_INSERT_MODE | ENABLE_EXTENDED_FLAGS;
+    if (!SetConsoleMode(InputHandle, fdwMode)) {
+        std::cout << "SetConsoleMode" << std::endl;
+        goto stop;
+    }
+    if (!ReadConsoleInput(
+        InputHandle,      // input buffer handle 
+        irInBuf,     // buffer to read into 
+        128,         // size of read buffer 
+        &lenght)) {// number of records read 
+        std::cout << "ReadConsoleInput" << std::endl;
+        goto stop;
+    }
+    for (int i = 0; i < lenght; i++)
     {
-        // Wait for the events.
-
-        if (!ReadConsoleInput(
-            hStdin,      // input buffer handle
-            irInBuf,     // buffer to read into
-            128,         // size of read buffer
-            &cNumRead)) // number of records read
-            ErrorExit("ReadConsoleInput");
-
-        // Dispatch the events to the appropriate handler.
-
-        for (i = 0; i < cNumRead; i++)
+        switch (irInBuf[i].EventType)
         {
-            switch (irInBuf[i].EventType)
-            {
-            case KEY_EVENT: // keyboard input
-                KeyEventProc(irInBuf[i].Event.KeyEvent);
-                break;
+        case KEY_EVENT: // keyboard input 
+            KeyEventProc(irInBuf[i].Event.KeyEvent);
+            break;
 
-            case MOUSE_EVENT: // mouse input
-                MouseEventProc(irInBuf[i].Event.MouseEvent);
-                break;
+        case MOUSE_EVENT: // mouse input 
+            MouseEventProc(irInBuf[i].Event.MouseEvent);
+            break;
 
-            case WINDOW_BUFFER_SIZE_EVENT: // scrn buf. resizing
-                ResizeEventProc(irInBuf[i].Event.WindowBufferSizeEvent);
-                break;
+        case WINDOW_BUFFER_SIZE_EVENT: // scrn buf. resizing 
+            ResizeEventProc(irInBuf[i].Event.WindowBufferSizeEvent);
+            break;
 
-            case FOCUS_EVENT:  // disregard focus events
+        case FOCUS_EVENT:  // disregard focus events 
 
-            case MENU_EVENT:   // disregard menu events
-                break;
+        case MENU_EVENT:   // disregard menu events 
+            break;
 
-            default:
-                ErrorExit("Unknown event type");
-                break;
-            }
+        default:
+            std::cout << "Unknown event type" << std::endl;
+            break;
         }
     }
 
-    // Restore input mode on exit.
-
-    SetConsoleMode(hStdin, fdwSaveOldMode);
-
-    return 0;
+    stop: SetConsoleMode(InputHandle, fdwSaveOldMode);
+	return -1;
 }
 
-VOID ErrorExit(LPSTR lpszMessage)
-{
-    fprintf(stderr, "%s\n", lpszMessage);
-
-    // Restore input mode on exit.
-
-    SetConsoleMode(hStdin, fdwSaveOldMode);
-
-    ExitProcess(0);
-}
 
 VOID KeyEventProc(KEY_EVENT_RECORD ker)
 {
@@ -159,12 +134,4 @@ VOID ResizeEventProc(WINDOW_BUFFER_SIZE_RECORD wbsr)
 {
     printf("Resize event\n");
     printf("Console screen buffer is %d columns by %d rows.\n", wbsr.dwSize.X, wbsr.dwSize.Y);
-}
-
-HANDLE GetStandartInputHandle() 
-{
-    HANDLE hStdi = GetStdHandle(STD_INPUT_HANDLE);
-    if (hStdi == INVALID_HANDLE_VALUE)
-        ErrorExit("GetStdHandle");
-    return hStdi;
 }

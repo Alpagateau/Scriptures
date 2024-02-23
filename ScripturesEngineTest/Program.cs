@@ -7,8 +7,25 @@ class Program
 {
     static void Main(string[] args)
     {
+        /*
         Snake game = new Snake();
         game.main();
+        */
+        justAwindow w = new justAwindow();
+        w.main();
+    }
+}
+
+class justAwindow
+{
+    GameWindow gameWindow;
+
+    public void main()
+    {
+        gameWindow = new GameWindow()
+            .SetWindowSize(100, 40);
+        while(true)
+            gameWindow.inputSystem.testAgain();
     }
 }
 
