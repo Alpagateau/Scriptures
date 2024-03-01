@@ -18,16 +18,31 @@ namespace WireEngine
     {
 
         const string cppUtilsDllPath = "F:\\code\\wiremole\\Scriptures\\x64\\Debug\\ConsoleCppUtils.dll";
-        //cpp lib
-        [DllImport(cppUtilsDllPath)]
-        private static extern IntPtr GetStandartHandle(int kind);
 
         [DllImport(cppUtilsDllPath)]
-        private static extern int TestWithInputs();
+        static extern void dll_getMousePos([MarshalAs(UnmanagedType.Struct)] ref mousePosStruct mp, IntPtr hdl);
+        [DllImport(cppUtilsDllPath)]
+        static extern IntPtr dll_GetStandartHandle(int kind);
 
-        public void testAgain()
+        IntPtr InputHandle;
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+        struct mousePosStruct
         {
-            TestWithInputs();
+            public int x;
+            public int y;
+        }
+
+        public Vector2Int getMousePosition()
+        {
+            mousePosStruct p = new mousePosStruct();
+            dll_getMousePos(ref p, InputHandle);
+            return new Vector2Int(p.x, p.y);
+        }
+
+        public Input()
+        {
+            InputHandle = dll_GetStandartHandle(0);
         }
 
         //Old code, works without the real stuff (no cpp lib)

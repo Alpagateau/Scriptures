@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "ipt.h"
 #include <windows.h>
 #include <stdio.h>
 #include <tchar.h>
@@ -6,12 +7,14 @@
 
 #define EXPORTED_METHODE extern "C" __declspec(dllexport)
 
-VOID KeyEventProc(KEY_EVENT_RECORD);
-VOID MouseEventProc(MOUSE_EVENT_RECORD);
-VOID ResizeEventProc(WINDOW_BUFFER_SIZE_RECORD);
+struct mousePos
+{
+    int x;
+    int y;
+};
 
 EXPORTED_METHODE
-HANDLE GetStandartHandle(int kind)
+HANDLE dll_GetStandartHandle(int kind)
 {
 	if (kind == 0)
 		return GetStdHandle(STD_INPUT_HANDLE);
@@ -20,7 +23,7 @@ HANDLE GetStandartHandle(int kind)
 	if (kind == 2)
 		return GetStdHandle(STD_ERROR_HANDLE);
 }
-
+/*
 EXPORTED_METHODE
 int TestWithInputs()
 {
@@ -77,61 +80,45 @@ int TestWithInputs()
     stop: SetConsoleMode(InputHandle, fdwSaveOldMode);
 	return -1;
 }
+*/
 
-
-VOID KeyEventProc(KEY_EVENT_RECORD ker)
+EXPORTED_METHODE
+void dll_getMousePos(mousePos *mp, HANDLE hdl)
 {
-    printf("Key event: ");
+    HANDLE InputHandle = hdl;
+    INPUT_RECORD irInBuf[128];
+    DWORD lenght, fdwMode;
 
-    if (ker.bKeyDown)
-        printf("key pressed\n");
-    else printf("key released\n");
-}
+    DWORD fdwSaveOldMode;
 
-VOID MouseEventProc(MOUSE_EVENT_RECORD mer)
-{
-#ifndef MOUSE_HWHEELED
-#define MOUSE_HWHEELED 0x0008
-#endif
-    printf("Mouse event: ");
-
-    switch (mer.dwEventFlags)
-    {
-    case 0:
-
-        if (mer.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED)
-        {
-            printf("left button press \n");
-        }
-        else if (mer.dwButtonState == RIGHTMOST_BUTTON_PRESSED)
-        {
-            printf("right button press \n");
-        }
-        else
-        {
-            printf("button press\n");
-        }
-        break;
-    case DOUBLE_CLICK:
-        printf("double click\n");
-        break;
-    case MOUSE_HWHEELED:
-        printf("horizontal mouse wheel\n");
-        break;
-    case MOUSE_MOVED:
-        printf("mouse moved\n");
-        break;
-    case MOUSE_WHEELED:
-        printf("vertical mouse wheel\n");
-        break;
-    default:
-        printf("unknown\n");
-        break;
+    if (!GetConsoleMode(InputHandle, &fdwSaveOldMode)) {
+        std::cout << "ERROR : Line 32" << std::endl;
+        return;
     }
-}
-
-VOID ResizeEventProc(WINDOW_BUFFER_SIZE_RECORD wbsr)
-{
-    printf("Resize event\n");
-    printf("Console screen buffer is %d columns by %d rows.\n", wbsr.dwSize.X, wbsr.dwSize.Y);
+    fdwMode = ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT | ENABLE_INSERT_MODE | ENABLE_EXTENDED_FLAGS;
+    if (!SetConsoleMode(InputHandle, fdwMode)) {
+        std::cout << "SetConsoleMode" << std::endl;
+        return;
+    }
+    if (!PeekConsoleInput(
+        InputHandle,      // input buffer handle 
+        irInBuf,     // buffer to read into 
+        128,         // size of read buffer 
+        &lenght)) {// number of records read 
+        std::cout << "ReadConsoleInput" << std::endl;
+        SetConsoleMode(InputHandle, fdwSaveOldMode);
+        return;
+    }
+    for (int i = 0; i < lenght; i++)
+    {
+        switch (irInBuf[i].EventType)
+        {
+        case MOUSE_EVENT: // mouse input 
+            mp->x = irInBuf[i].Event.MouseEvent.dwMousePosition.X;
+            mp->y = irInBuf[i].Event.MouseEvent.dwMousePosition.Y;
+            break;
+        default:
+            break;
+        }
+    }
 }

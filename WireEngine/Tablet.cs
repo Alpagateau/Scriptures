@@ -11,7 +11,14 @@ namespace WireEngine
     public enum TabletRenderType
     {
         Direct,
-        Bufferd
+        Buffered
+    }
+
+    public enum wrapParameter
+    {
+        warning,
+        block,
+        wrap
     }
 
     public class Tablet
@@ -48,17 +55,57 @@ namespace WireEngine
             transform.scale.y = h;
         }
 
-        public void setCursorPosition(int x, int y)
+
+        public void setCursorPosition(int x, int y) => setCursorPosition(x, y, wrapParameter.wrap);
+        public void setCursorPosition(int x, int y, wrapParameter parameter)
         {
             if (x < 0 || y < 0)
             {
-                throw new Exception("Cannot set position below zero : " + x + "x " + y + "y");
-                return;
+                switch (parameter)
+                {
+                    case wrapParameter.warning:
+                        throw new Exception("Cannot set position below zero : " + x + "x " + y + "y");
+                        return;
+                        break;
+                    case wrapParameter.block:
+                        if (x < 0)
+                            x = 0;
+                        if (y < 0)
+                            y = 0;
+                        break;
+                    case wrapParameter.wrap:
+                        if(x < 0)
+                            x += (transform.scale.x);
+                        if(y < 0)
+                            y += (transform.scale.y);
+                        break;
+                    default:
+                        break;
+                }
             }
-            if (x > transform.scale.x || y > transform.scale.y)
+            if (x >= transform.scale.x || y >= transform.scale.y)
             {
-                throw new Exception("Cannot set position too high : " + x + "x " + y + "y");
-                return;
+                switch (parameter)
+                {
+                    case wrapParameter.warning:
+                        throw new Exception("Cannot set position too high : " + x + "x " + y + "y");
+                        return;
+                        break;
+                    case wrapParameter.block:
+                        if (x >= transform.scale.x)
+                            x = transform.scale.x;
+                        if (y >= transform.scale.y)
+                            y = transform.scale.y;
+                        break;
+                    case wrapParameter.wrap:
+                        if(x >= transform.scale.x)
+                            x -= (transform.scale.x);
+                        if (y >= transform.scale.y)
+                            y -= (transform.scale.y);
+                        break;
+                    default:
+                        break;
+                }
             }
             Console.SetCursorPosition(x + transform.position.x, y + transform.position.y);
         }

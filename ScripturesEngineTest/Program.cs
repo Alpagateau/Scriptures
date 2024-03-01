@@ -6,13 +6,14 @@ namespace WireEngine;
 class Program
 {
     static void Main(string[] args)
-    {
-        /*
+    {   /*
         Snake game = new Snake();
         game.main();
         */
+        
         justAwindow w = new justAwindow();
         w.main();
+        
     }
 }
 
@@ -24,8 +25,18 @@ class justAwindow
     {
         gameWindow = new GameWindow()
             .SetWindowSize(100, 40);
+        Tablet renderer = new Tablet(0, 0, 100, 40);
+        gameWindow.addTablet(renderer);
         while(true)
-            gameWindow.inputSystem.testAgain();
+        {
+            renderer.Clear();
+            renderer.Write("@", gameWindow.inputSystem.getMousePosition());
+            renderer.Write("@", gameWindow.inputSystem.getMousePosition() + new Vector2Int(0, 1));
+            renderer.Write("@", gameWindow.inputSystem.getMousePosition() + new Vector2Int(1, 0));
+            renderer.Write("@", gameWindow.inputSystem.getMousePosition() + new Vector2Int(-1,0));
+            renderer.Write("@", gameWindow.inputSystem.getMousePosition() + new Vector2Int(0,-1));
+
+        }
     }
 }
 
