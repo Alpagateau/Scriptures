@@ -15,12 +15,12 @@ namespace WireEngine
         /// <summary>
         /// Left mouse button
         /// </summary>
-        LBUTTON = 0x01,
+        LMOUSEBUTTON = 0x01,
 
         /// <summary>
         /// Right mouse button
         /// </summary>
-        RBUTTON = 0x02,
+        RMOUSEBUTTON = 0x02,
 
         /// <summary>
         /// Control-break processing
@@ -47,7 +47,7 @@ namespace WireEngine
         /// <summary>
         /// BACKSPACE key
         /// </summary>
-        BACK = 0x08,
+        BACKSPACE = 0x08,
 
         /// <summary>
         /// TAB key
@@ -64,7 +64,7 @@ namespace WireEngine
         /// <summary>
         /// ENTER key
         /// </summary>
-        RETURN = 0x0D,
+        ENTER = 0x0D,
 
         // 0x0E - 0x0F : Undefined
 
@@ -81,7 +81,7 @@ namespace WireEngine
         /// <summary>
         /// ALT key
         /// </summary>
-        MENU = 0x12,
+        ALT = 0x12,
 
         /// <summary>
         /// PAUSE key
@@ -91,7 +91,7 @@ namespace WireEngine
         /// <summary>
         /// CAPS LOCK key
         /// </summary>
-        CAPITAL = 0x14,
+        CAPSLOCK = 0x14,
 
         /// <summary>
         /// Input Method Editor (IME) Kana mode
@@ -160,17 +160,17 @@ namespace WireEngine
         /// <summary>
         /// SPACEBAR
         /// </summary>
-        SPACE = 0x20,
+        SPACEBAR = 0x20,
 
         /// <summary>
         /// PAGE UP key
         /// </summary>
-        PRIOR = 0x21,
+        PAGEUP = 0x21,
 
         /// <summary>
         /// PAGE DOWN key
         /// </summary>
-        NEXT = 0x22,
+        PAGEDOWN = 0x22,
 
         /// <summary>
         /// END key
@@ -185,22 +185,22 @@ namespace WireEngine
         /// <summary>
         /// LEFT ARROW key
         /// </summary>
-        LEFT = 0x25,
+        LEFTARROW = 0x25,
 
         /// <summary>
         /// UP ARROW key
         /// </summary>
-        UP = 0x26,
+        UPARROW = 0x26,
 
         /// <summary>
         /// RIGHT ARROW key
         /// </summary>
-        RIGHT = 0x27,
+        RIGHTARROW = 0x27,
 
         /// <summary>
         /// DOWN ARROW key
         /// </summary>
-        DOWN = 0x28,
+        DOWNARROW = 0x28,
 
         /// <summary>
         /// SELECT key
@@ -220,7 +220,7 @@ namespace WireEngine
         /// <summary>
         /// PRINT SCREEN key
         /// </summary>
-        SNAPSHOT = 0x2C,
+        PRINTSCREEN = 0x2C,
 
         /// <summary>
         /// INS key
@@ -240,52 +240,52 @@ namespace WireEngine
         /// <summary>
         /// 0 key
         /// </summary>
-        VK_0 = 0x30,
+        _0 = 0x30,
 
         /// <summary>
         /// 1 key
         /// </summary>
-        VK_1 = 0x31,
+        _1 = 0x31,
 
         /// <summary>
         /// 2 key
         /// </summary>
-        VK_2 = 0x32,
+        _2 = 0x32,
 
         /// <summary>
         /// 3 key
         /// </summary>
-        VK_3 = 0x33,
+        _3 = 0x33,
 
         /// <summary>
         /// 4 key
         /// </summary>
-        VK_4 = 0x34,
+        _4 = 0x34,
 
         /// <summary>
         /// 5 key
         /// </summary>
-        VK_5 = 0x35,
+        _5 = 0x35,
 
         /// <summary>
         /// 6 key
         /// </summary>
-        VK_6 = 0x36,
+        _6 = 0x36,
 
         /// <summary>
         /// 7 key
         /// </summary>
-        VK_7 = 0x37,
+        _7 = 0x37,
 
         /// <summary>
         /// 8 key
         /// </summary>
-        VK_8 = 0x38,
+        _8 = 0x38,
 
         /// <summary>
         /// 9 key
         /// </summary>
-        VK_9 = 0x39,
+        _9 = 0x39,
 
         //
         // 0x3A - 0x40 : Udefined
@@ -294,142 +294,142 @@ namespace WireEngine
         /// <summary>
         /// A key
         /// </summary>
-        VK_A = 0x41,
+        _A = 0x41,
 
         /// <summary>
         /// B key
         /// </summary>
-        VK_B = 0x42,
+        _B = 0x42,
 
         /// <summary>
         /// C key
         /// </summary>
-        VK_C = 0x43,
+        _C = 0x43,
 
         /// <summary>
         /// D key
         /// </summary>
-        VK_D = 0x44,
+        _D = 0x44,
 
         /// <summary>
         /// E key
         /// </summary>
-        VK_E = 0x45,
+        _E = 0x45,
 
         /// <summary>
         /// F key
         /// </summary>
-        VK_F = 0x46,
+        _F = 0x46,
 
         /// <summary>
         /// G key
         /// </summary>
-        VK_G = 0x47,
+        _G = 0x47,
 
         /// <summary>
         /// H key
         /// </summary>
-        VK_H = 0x48,
+        _H = 0x48,
 
         /// <summary>
         /// I key
         /// </summary>
-        VK_I = 0x49,
+        _I = 0x49,
 
         /// <summary>
         /// J key
         /// </summary>
-        VK_J = 0x4A,
+        _J = 0x4A,
 
         /// <summary>
         /// K key
         /// </summary>
-        VK_K = 0x4B,
+        _K = 0x4B,
 
         /// <summary>
         /// L key
         /// </summary>
-        VK_L = 0x4C,
+        _L = 0x4C,
 
         /// <summary>
         /// M key
         /// </summary>
-        VK_M = 0x4D,
+        _M = 0x4D,
 
         /// <summary>
         /// N key
         /// </summary>
-        VK_N = 0x4E,
+        _N = 0x4E,
 
         /// <summary>
         /// O key
         /// </summary>
-        VK_O = 0x4F,
+        _O = 0x4F,
 
         /// <summary>
         /// P key
         /// </summary>
-        VK_P = 0x50,
+        _P = 0x50,
 
         /// <summary>
         /// Q key
         /// </summary>
-        VK_Q = 0x51,
+        _Q = 0x51,
 
         /// <summary>
         /// R key
         /// </summary>
-        VK_R = 0x52,
+        _R = 0x52,
 
         /// <summary>
         /// S key
         /// </summary>
-        VK_S = 0x53,
+        _S = 0x53,
 
         /// <summary>
         /// T key
         /// </summary>
-        VK_T = 0x54,
+        _T = 0x54,
 
         /// <summary>
         /// U key
         /// </summary>
-        VK_U = 0x55,
+        _U = 0x55,
 
         /// <summary>
         /// V key
         /// </summary>
-        VK_V = 0x56,
+        _V = 0x56,
 
         /// <summary>
         /// W key
         /// </summary>
-        VK_W = 0x57,
+        _W = 0x57,
 
         /// <summary>
         /// X key
         /// </summary>
-        VK_X = 0x58,
+        _X = 0x58,
 
         /// <summary>
         /// Y key
         /// </summary>
-        VK_Y = 0x59,
+        _Y = 0x59,
 
         /// <summary>
         /// Z key
         /// </summary>
-        VK_Z = 0x5A,
+        _Z = 0x5A,
 
         /// <summary>
         /// Left Windows key (Microsoft Natural keyboard)
         /// </summary>
-        LWIN = 0x5B,
+        LWINDOWS = 0x5B,
 
         /// <summary>
         /// Right Windows key (Natural keyboard)
         /// </summary>
-        RWIN = 0x5C,
+        RWINDOWS = 0x5C,
 
         /// <summary>
         /// Applications key (Natural keyboard)
@@ -655,7 +655,7 @@ namespace WireEngine
         /// <summary>
         /// SCROLL LOCK key
         /// </summary>
-        SCROLL = 0x91,
+        SCROLLLOCK = 0x91,
 
         // 0x92 - 0x96 : OEM Specific
 

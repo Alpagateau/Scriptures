@@ -126,7 +126,7 @@ class Snake
 
     void GameLoop(object? o, EventArgs e)
     {
-        if(gameWindow.inputSystem.GetKeyDown(KeyCode.TAB))
+        if(gameWindow.inputSystem.GetKeyDown(KeyCode.ENTER))
         {
             if (!isRunning && !isAlive)
             {
@@ -215,19 +215,19 @@ class Snake
 
             }
             //check for inputs
-            if (gameWindow.inputSystem.GetKeyDown(KeyCode.UP))
+            if (gameWindow.inputSystem.GetKeyDown(KeyCode.UPARROW))
             {
                 dir = 1;
             }
-            else if (gameWindow.inputSystem.GetKeyDown(KeyCode.DOWN))
+            else if (gameWindow.inputSystem.GetKeyDown(KeyCode.DOWNARROW))
             {
                 dir = 3;
             }
-            else if (gameWindow.inputSystem.GetKeyDown(KeyCode.LEFT))
+            else if (gameWindow.inputSystem.GetKeyDown(KeyCode.LEFTARROW))
             {
                 dir = 0;
             }
-            else if (gameWindow.inputSystem.GetKeyDown(KeyCode.RIGHT))
+            else if (gameWindow.inputSystem.GetKeyDown(KeyCode.RIGHTARROW))
             {
                 dir = 2;
             }
