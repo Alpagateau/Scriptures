@@ -122,6 +122,8 @@ class Snake
         renderer2.borderWith('#', ConsoleColor.DarkGreen);
     }
 
+    int dd = 0;
+
     void GameLoop(object? o, EventArgs e)
     {
         if(gameWindow.inputSystem.GetKeyDown(KeyCode.TAB))
@@ -141,6 +143,7 @@ class Snake
         }
         if (isAlive)
         {
+            if(dd == 0){ 
             //move the player
             switch (dir)
             {
@@ -193,14 +196,14 @@ class Snake
             //check if player is dead
             //--Check if player's head is in a wall
             Vector2Int head = pos.Last();
-            if (head.x == 0 || head.y == 0 || head.x == renderer2.transform.scale.x-1|| head.y == renderer2.transform.scale.y-1)
+            if (head.x == 0 || head.y == 0 || head.x == renderer2.transform.scale.x - 1 || head.y == renderer2.transform.scale.y - 1)
             {
                 renderer2.Write("X", head);
                 renderer2.Write("Sorry, you are dead", new Vector2Int(50, 15), ConsoleColor.DarkRed);
                 isAlive = false;
             }
             int idx = pos.FindIndex(x => x == head);
-            if(idx != pos.Count-1)
+            if (idx != pos.Count - 1)
             {
                 renderer2.Write("X", head);
                 renderer2.Write("Sorry, you are dead", new Vector2Int(50, 15), ConsoleColor.DarkRed);
@@ -210,23 +213,27 @@ class Snake
             topSection.Write("Score = " + i, new Vector2Int(5, 1), ConsoleColor.Black);
             topSection.Write("apple = " + apple.x + "x " + apple.y + "y", new Vector2Int(30, 1));
 
+            }
             //check for inputs
-            if(gameWindow.inputSystem.GetKeyDown(KeyCode.UP))
+            if (gameWindow.inputSystem.GetKeyDown(KeyCode.UP))
             {
                 dir = 1;
             }
-            else if(gameWindow.inputSystem.GetKeyDown(KeyCode.DOWN))
+            else if (gameWindow.inputSystem.GetKeyDown(KeyCode.DOWN))
             {
                 dir = 3;
-            }else if(gameWindow.inputSystem.GetKeyDown(KeyCode.LEFT))
+            }
+            else if (gameWindow.inputSystem.GetKeyDown(KeyCode.LEFT))
             {
                 dir = 0;
-            }else if(gameWindow.inputSystem.GetKeyDown(KeyCode.RIGHT))
+            }
+            else if (gameWindow.inputSystem.GetKeyDown(KeyCode.RIGHT))
             {
                 dir = 2;
             }
-
-            Thread.Sleep(50);
+            dd++;
+            if (dd > 500)
+                dd = 0;
         }
     }
 }

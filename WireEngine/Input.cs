@@ -25,8 +25,18 @@ namespace WireEngine
         static extern IntPtr dll_GetStandartHandle(int kind);
         [DllImport(cppUtilsDllPath)]
         static extern void dll_getPressedKeys(IntPtr p, IntPtr hdl);
+        [DllImport(cppUtilsDllPath)]
+        static extern void dll_getKeyboardAndMouse(IntPtr hdl, [MarshalAs(UnmanagedType.Struct)] ref mousePosStruct mp, IntPtr kpi);
+        [DllImport(cppUtilsDllPath)]
+        static extern void dll_setConsoleReadable(IntPtr hdl);
+        [DllImport(cppUtilsDllPath)]
+        static extern void dll_getOldConsoleMode(IntPtr hdl, ref int fdwSaveOldMode);
+        [DllImport(cppUtilsDllPath)]
+        private static extern void dll_resetConsoleMode(IntPtr hdl, int fdwOldMode);
 
         IntPtr InputHandle;
+
+        int oldConsoleMode;
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
         struct mousePosStruct
@@ -36,6 +46,7 @@ namespace WireEngine
         }
 
         byte[] pressedKeys;
+        mousePosStruct mps;
 
         public Vector2Int getMousePosition()
         {
@@ -58,11 +69,19 @@ namespace WireEngine
         {
             InputHandle = dll_GetStandartHandle(0);
             pressedKeys = new byte[32];
+            mps = new mousePosStruct();
+            dll_getOldConsoleMode(InputHandle, ref oldConsoleMode);
+            dll_setConsoleReadable(InputHandle);
         }
 
         public void __updateInput(object? o, EventArgs e)
         {
-            updatePressedKeys();
+            pressedKeys = new byte[32];
+            IntPtr p = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(byte)) * 32);
+            Marshal.Copy(pressedKeys, 0, p, pressedKeys.Length);
+            dll_getKeyboardAndMouse(InputHandle, ref mps, p);
+            Marshal.Copy(p, pressedKeys, 0, 32);
+            Marshal.FreeHGlobal(p);
         }
 
         public bool GetKeyDown(KeyCode key)
@@ -77,9 +96,14 @@ namespace WireEngine
             return !(r == 0x00);
         }
 
+        ~Input()
+        {
+            dll_resetConsoleMode(InputHandle, oldConsoleMode);
+        }
+
         //Old code, works without the real stuff (no cpp lib)
-        public delegate void KeyboardInputHandler(InputKeys e);
-        public event KeyboardInputHandler KeyboardInput;
+        //public delegate void KeyboardInputHandler(InputKeys e);
+        //public event KeyboardInputHandler KeyboardInput;
 
         //Keyboard inputs
         /*

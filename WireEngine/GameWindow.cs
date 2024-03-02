@@ -55,7 +55,7 @@ namespace WireEngine
         private static extern int SetConsoleToPixel();
         [DllImport(cppUtilsDllPath)]
         private static extern int BlockScrolling();
-
+        
         private ColorScheme colorScheme;
 
         public GameWindow()
@@ -219,6 +219,11 @@ namespace WireEngine
             if (x > WINDOW_WIDTH - 1 || y > WINDOW_HEIGHT - 1)
                 return;
             Console.SetCursorPosition(x,y);
+        }
+
+        ~GameWindow()
+        {
+            
         }
     }
 }

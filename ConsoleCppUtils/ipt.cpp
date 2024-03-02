@@ -7,6 +7,8 @@
 
 #define EXPORTED_METHODE extern "C" __declspec(dllexport)
 
+#define FDW_MODE (0x00B8)
+
 struct mousePos
 {
     int x;
@@ -81,7 +83,6 @@ int TestWithInputs()
 	return -1;
 }
 */
-
 EXPORTED_METHODE
 void dll_getMousePos(mousePos *mp, HANDLE hdl)
 {
@@ -180,5 +181,85 @@ void dll_getPressedKeys(BYTE kpi[32], HANDLE hdl)
     if (value > 128)
     {
         FlushConsoleInputBuffer(InputHandle);
+    }
+}
+
+EXPORTED_METHODE
+void dll_getOldConsoleMode(HANDLE hdl, int* fdwSaveOldMode)
+{
+    if (!GetConsoleMode(hdl, (DWORD*)fdwSaveOldMode))
+        throw std::invalid_argument("cant get console mode");
+}
+
+EXPORTED_METHODE
+void dll_setConsoleReadable(HANDLE hdl)
+{
+    if (!SetConsoleMode(hdl, FDW_MODE)) {
+        throw std::invalid_argument("cant set console mode");
+        return;
+    }
+}
+
+EXPORTED_METHODE
+void dll_resetConsoleMode(HANDLE hdl, int fdwOldMode)
+{
+    if (!SetConsoleMode(hdl, (DWORD)fdwOldMode)) {
+        throw std::invalid_argument("cant set console mode");
+        return;
+    }
+}
+
+EXPORTED_METHODE
+void dll_getKeyboardAndMouse(HANDLE hdl, mousePos* mp, BYTE kpi[32])
+{
+    INPUT_RECORD irInBuf[128];
+    DWORD lenght;
+    DWORD value;
+    LPDWORD lpdWord = &value;
+    GetNumberOfConsoleInputEvents(hdl, lpdWord);
+    if (value > 0) {
+        if (!PeekConsoleInput(
+            hdl,      // input buffer handle 
+            irInBuf,     // buffer to read into 
+            128,         // size of read buffer 
+            &lenght)) {// number of records read 
+            throw std::invalid_argument("cant peek console input");
+            return;
+        }
+        for (int i = 0; i < lenght; i++)
+        {
+            switch (irInBuf[i].EventType)
+            {
+            case KEY_EVENT: // mouse input
+                //if key is down
+                //get index
+            {
+                unsigned int ui = irInBuf[i].Event.KeyEvent.wVirtualKeyCode;
+                int bIndex = ui % 8;
+                int byteIndex = (ui - bIndex) / 8;
+                if (irInBuf[i].Event.KeyEvent.bKeyDown) {
+                    kpi[byteIndex] |= (0x01 << bIndex);
+                }
+                else {
+                    BYTE b = (0x01 << bIndex);
+                    b = ~b;
+                    kpi[byteIndex] &= b;
+                }
+                //std::cout << ui << " || ";
+            }
+                break;
+            case MOUSE_EVENT: // mouse input 
+                mp->x = irInBuf[i].Event.MouseEvent.dwMousePosition.X;
+                mp->y = irInBuf[i].Event.MouseEvent.dwMousePosition.Y;
+                break;
+            default:
+                break;
+            }
+        }
+        //std::cout << std::endl;
+    }
+    if (value > 128)
+    {
+        FlushConsoleInputBuffer(hdl);
     }
 }
