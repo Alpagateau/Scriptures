@@ -6,37 +6,11 @@ namespace WireEngine;
 class Program
 {
     static void Main(string[] args)
-    {   /*
+    {   
+        
         Snake game = new Snake();
         game.main();
-        */
         
-        justAwindow w = new justAwindow();
-        w.main();
-        
-    }
-}
-
-class justAwindow
-{
-    GameWindow gameWindow;
-
-    public void main()
-    {
-        gameWindow = new GameWindow()
-            .SetWindowSize(100, 40);
-        Tablet renderer = new Tablet(0, 0, 100, 40);
-        gameWindow.addTablet(renderer);
-        while(true)
-        {
-            renderer.Clear();
-            renderer.Write("@", gameWindow.inputSystem.getMousePosition());
-            renderer.Write("@", gameWindow.inputSystem.getMousePosition() + new Vector2Int(0, 1));
-            renderer.Write("@", gameWindow.inputSystem.getMousePosition() + new Vector2Int(1, 0));
-            renderer.Write("@", gameWindow.inputSystem.getMousePosition() + new Vector2Int(-1,0));
-            renderer.Write("@", gameWindow.inputSystem.getMousePosition() + new Vector2Int(0,-1));
-
-        }
     }
 }
 
@@ -75,7 +49,7 @@ class Snake
 
         gameWindow.Starting += Start;
         gameWindow.Updating += GameLoop;
-        gameWindow.inputSystem.KeyboardInput += HandleInput;
+        //gameWindow.inputSystem.KeyboardInput += HandleInput;
         gameWindow.Start();
     }
 
@@ -150,6 +124,21 @@ class Snake
 
     void GameLoop(object? o, EventArgs e)
     {
+        if(gameWindow.inputSystem.GetKeyDown(KeyCode.TAB))
+        {
+            if (!isRunning && !isAlive)
+            {
+                topSection.Clear();
+                moveApple();
+                isRunning = true;
+                isAlive = true;
+            }
+            else if (!isAlive)
+            {
+                isRunning = false;
+                Start(this, EventArgs.Empty);
+            }
+        }
         if (isAlive)
         {
             //move the player
@@ -220,6 +209,22 @@ class Snake
 
             topSection.Write("Score = " + i, new Vector2Int(5, 1), ConsoleColor.Black);
             topSection.Write("apple = " + apple.x + "x " + apple.y + "y", new Vector2Int(30, 1));
+
+            //check for inputs
+            if(gameWindow.inputSystem.GetKeyDown(KeyCode.UP))
+            {
+                dir = 1;
+            }
+            else if(gameWindow.inputSystem.GetKeyDown(KeyCode.DOWN))
+            {
+                dir = 3;
+            }else if(gameWindow.inputSystem.GetKeyDown(KeyCode.LEFT))
+            {
+                dir = 0;
+            }else if(gameWindow.inputSystem.GetKeyDown(KeyCode.RIGHT))
+            {
+                dir = 2;
+            }
 
             Thread.Sleep(50);
         }

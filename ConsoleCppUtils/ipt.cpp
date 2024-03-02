@@ -88,7 +88,6 @@ void dll_getMousePos(mousePos *mp, HANDLE hdl)
     HANDLE InputHandle = hdl;
     INPUT_RECORD irInBuf[128];
     DWORD lenght, fdwMode;
-
     DWORD fdwSaveOldMode;
 
     if (!GetConsoleMode(InputHandle, &fdwSaveOldMode)) {
@@ -120,5 +119,66 @@ void dll_getMousePos(mousePos *mp, HANDLE hdl)
         default:
             break;
         }
+    }
+}
+
+EXPORTED_METHODE
+void dll_getPressedKeys(BYTE kpi[32], HANDLE hdl)
+{
+    HANDLE InputHandle = hdl;
+    INPUT_RECORD irInBuf[128];
+    DWORD lenght, fdwMode;
+    DWORD fdwSaveOldMode;
+
+    if (!GetConsoleMode(InputHandle, &fdwSaveOldMode)) {
+        //std::cout << "ERROR : Line 32" << std::endl;
+        throw std::invalid_argument("cant get console mode");
+        return;
+    }
+    fdwMode = ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT | ENABLE_INSERT_MODE | ENABLE_EXTENDED_FLAGS;
+    if (!SetConsoleMode(InputHandle, fdwMode)) {
+        throw std::invalid_argument("cant set console mode");
+        return;
+    }
+    DWORD value;
+    LPDWORD lpdWord = &value;
+    GetNumberOfConsoleInputEvents(InputHandle, lpdWord);
+    if (value > 0){
+        if (!PeekConsoleInput(
+            InputHandle,      // input buffer handle 
+            irInBuf,     // buffer to read into 
+            128,         // size of read buffer 
+            &lenght)) {// number of records read 
+            std::cout << "ReadConsoleInput" << std::endl;
+            SetConsoleMode(InputHandle, fdwSaveOldMode);
+            return;
+        }
+        for (int i = 0; i < lenght; i++)
+        {
+            switch (irInBuf[i].EventType)
+            {
+            case KEY_EVENT: // mouse input
+                //if key is down
+                //get index
+                unsigned int ui = irInBuf[i].Event.KeyEvent.wVirtualKeyCode;
+                int bIndex = ui % 8;
+                int byteIndex = (ui - bIndex) / 8;
+                if (irInBuf[i].Event.KeyEvent.bKeyDown) {
+                    kpi[byteIndex] |= (0x01 << bIndex);
+                }
+                else {
+                    BYTE b = (0x01 << bIndex);
+                    b = ~b;
+                    kpi[byteIndex] &= b;
+                }
+                //std::cout << ui << " || ";
+                break;
+            }
+        }
+        //std::cout << std::endl;
+    }
+    if (value > 128)
+    {
+        FlushConsoleInputBuffer(InputHandle);
     }
 }

@@ -23,6 +23,8 @@ namespace WireEngine
         static extern void dll_getMousePos([MarshalAs(UnmanagedType.Struct)] ref mousePosStruct mp, IntPtr hdl);
         [DllImport(cppUtilsDllPath)]
         static extern IntPtr dll_GetStandartHandle(int kind);
+        [DllImport(cppUtilsDllPath)]
+        static extern void dll_getPressedKeys(IntPtr p, IntPtr hdl);
 
         IntPtr InputHandle;
 
@@ -33,6 +35,8 @@ namespace WireEngine
             public int y;
         }
 
+        byte[] pressedKeys;
+
         public Vector2Int getMousePosition()
         {
             mousePosStruct p = new mousePosStruct();
@@ -40,9 +44,37 @@ namespace WireEngine
             return new Vector2Int(p.x, p.y);
         }
 
+        void updatePressedKeys()
+        {
+            pressedKeys = new byte[32];
+            IntPtr p = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(byte)) * 32);
+            Marshal.Copy(pressedKeys, 0, p, pressedKeys.Length);
+            dll_getPressedKeys(p, InputHandle);
+            Marshal.Copy(p, pressedKeys, 0, 32);
+            Marshal.FreeHGlobal(p);
+        }
+
         public Input()
         {
             InputHandle = dll_GetStandartHandle(0);
+            pressedKeys = new byte[32];
+        }
+
+        public void __updateInput(object? o, EventArgs e)
+        {
+            updatePressedKeys();
+        }
+
+        public bool GetKeyDown(KeyCode key)
+        {
+            int ui = (int)key;
+            int bIndex = ui % 8;
+            int byteIndex = (ui - bIndex) / 8;
+
+            byte r = pressedKeys[byteIndex];
+            byte mask = (byte)(0x01 << bIndex);
+            r &= mask;
+            return !(r == 0x00);
         }
 
         //Old code, works without the real stuff (no cpp lib)
@@ -50,6 +82,7 @@ namespace WireEngine
         public event KeyboardInputHandler KeyboardInput;
 
         //Keyboard inputs
+        /*
         public void CheckForInputs(object? o, EventArgs e)
         {
             if (Console.KeyAvailable)
@@ -79,5 +112,6 @@ namespace WireEngine
                 KeyboardInput.Invoke(ik);
             }
         }
+        */
     }
 }

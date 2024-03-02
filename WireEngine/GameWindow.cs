@@ -92,7 +92,7 @@ namespace WireEngine
             isGameRunning = true;
             Console.Title = ApplicationName;
             Console.SetWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-            Updating += inputSystem.CheckForInputs;
+            Updating += inputSystem.__updateInput;
 
             OnStarting();
             while(isGameRunning)
