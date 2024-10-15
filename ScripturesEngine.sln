@@ -5,7 +5,7 @@ VisualStudioVersion = 17.5.33627.172
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ScripturesEngine", "ScripturesEngine.vcxproj", "{59CB6BC5-93CB-4C4B-92D7-A0740485DA4A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Demo", "..\Demo\Demo.vcxproj", "{2562AC85-5787-431E-B2D5-C9F323131A76}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Demo", ".\Demo\Demo.vcxproj", "{2562AC85-5787-431E-B2D5-C9F323131A76}"
 	ProjectSection(ProjectDependencies) = postProject
 		{59CB6BC5-93CB-4C4B-92D7-A0740485DA4A} = {59CB6BC5-93CB-4C4B-92D7-A0740485DA4A}
 	EndProjectSection
