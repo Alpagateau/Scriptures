@@ -1,4 +1,3 @@
-
 #include "pch.h"
 #include <iostream>
 #include <string>
@@ -10,7 +9,6 @@
 namespace scriptures
 {
 #pragma region Window
-
 	Window::Window()
 	{
 		console = GetConsoleWindow();
@@ -26,26 +24,7 @@ namespace scriptures
 	}
 
 	Window Window::SetSize(int w, int h)
-	{
-		/*
-		width = w;
-		height = h;
-
-		RECT r;
-		GetWindowRect(console, &r);
-
-		CONSOLE_FONT_INFO cfi;
-		GetCurrentConsoleFont(hOutput, FALSE, &cfi);
-
-		pWidth = cfi.dwFontSize.X * (w + 5);
-		pHeight = cfi.dwFontSize.Y * (h + 3);
-
-		MoveWindow(console, r.left, r.top, pWidth - 7, pHeight - 2, TRUE);
-		COORD c = { w, h };
-		SetConsoleScreenBufferSize(hOutput, c);
-		ShowScrollBar(console, SB_BOTH, false);
-		return *this;
-		*/
+	{	
 		width = w;
 		height = h;
 
@@ -209,7 +188,14 @@ namespace scriptures
 					if (!SetConsoleScreenBufferSize(hConOut, coord)) {
 						return FALSE;
 					}
-					return SetWindowPos(hWnd, NULL, rect.left, rect.top, cols*fi.dwFontSize.X+bw, rows*fi.dwFontSize.Y+bh, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
+					return SetWindowPos(
+                hWnd, 
+                NULL, 
+                rect.left, 
+                rect.top, 
+                cols*fi.dwFontSize.X+bw, 
+                rows*fi.dwFontSize.Y+bh, 
+                SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
 					}
 				}
 				}
@@ -363,12 +349,14 @@ namespace scriptures
 		{
 			fInput[i] = 0;
 		}
+    
+    // Updates the key buffer
+
 		for (i = 0; i < cNumRead; i++)
 		{
 			switch (irInBuf[i].EventType)
 			{
-			case KEY_EVENT: // keyboard input
-				//Set in fInput
+			case KEY_EVENT: // keyboard input //Set in fInput
 			{
 				int idx = irInBuf[i].Event.KeyEvent.wVirtualKeyCode;
 				int sec = idx / 8;
@@ -388,7 +376,9 @@ namespace scriptures
 			case MOUSE_EVENT: // mouse input
 				//TODO
 				break;
-
+      case WINDOW_BUFFER_SIZE_EVENT:
+        //TODO
+        break;
 			default:
 				//ErrorExit("Unknown event type");
 				break;
