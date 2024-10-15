@@ -4,8 +4,8 @@
 // Toutefois, les fichiers listés ici sont TOUS recompilés si l'un d'entre eux est mis à jour entre les builds.
 // N'ajoutez pas de fichiers fréquemment mis à jour ici, car cela annule les gains de performance.
 
-#ifndef CU_H
-#define CU_H
+#ifndef PCH_H
+#define PCH_H
 
 // ajouter les en-têtes à précompiler ici
 #include "framework.h"
